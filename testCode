@@ -2,7 +2,83 @@ local text = game:HttpGet("https://raw.githubusercontent.com/ice-byte10/StarterP
 text = text:match("^%s*(.-)%s*$")
 
 if text == "valid" then
-    print("working")
+    local lplayer = game.Players.LocalPlayer
+local playerGui = lplayer:WaitForChild("PlayerGui", 99)
+local uiController = playerGui:WaitForChild("UIControllerGui")
+local container = uiController:WaitForChild("AuctionBiddingContainer")
+
+local cursor = container.BidBarRow.Track.Cursor
+local bidZone = container.BidBarRow.Track.BidZone
+local bidButton = container.BidButton
+
+local clickActive = false
+
+task.spawn(function()
+    while true do
+        task.wait(0.01)
+        if clickActive then
+            for i = 1, 6 do
+                mousemoverel(1, 0)
+                task.wait(0.1)
+                mousemoverel(-1, 0)
+            end
+        end
+    end
+end)
+
+local function isCursorInZone()
+    local cursorLeft = cursor.AbsolutePosition.X
+    local cursorRight = cursorLeft + cursor.AbsoluteSize.X
+    local zoneLeft = bidZone.AbsolutePosition.X
+    local zoneRight = zoneLeft + bidZone.AbsoluteSize.X
+
+    local padding = 10
+
+    return (cursorRight >= zoneLeft + padding) and (cursorLeft <= zoneRight - padding)
+end
+
+local hasClicked = false
+local cooldown = false
+
+while true do
+    task.wait(0.01)
+    local is_visible = memory_read("byte", container.Address + 0x5AD)
+
+    if is_visible > 0 then
+          mousemoveabs(
+            math.floor(bidButton.AbsolutePosition.X + (bidButton.AbsoluteSize.X / 2)),
+            math.floor(bidButton.AbsolutePosition.Y + (bidButton.AbsoluteSize.Y / 2))
+        )
+
+        if isCursorInZone() and isrbxactive() then
+          
+            
+            if (cooldown == true) or (hasClicked == true) then continue end
+            hasClicked = true
+            task.spawn(function()
+                cooldown = true
+                task.wait(0.25)
+                cooldown = false
+            end)
+    
+
+            task.spawn(function()
+                clickActive = true
+                task.wait(0.5)
+                clickActive = false
+            end)
+
+            if bidButton:FindFirstChild("BidText") and bidButton.BidText.Text == "BID" then
+                mouse1click()
+            end
+        else
+            hasClicked = false
+            
+        end
+    else
+        hasClicked = false
+    end
+end
 else
     warn("not valid")
 end

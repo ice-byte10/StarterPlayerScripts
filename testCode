@@ -1,0 +1,8 @@
+local text = game:HttpGet("https://raw.githubusercontent.com/ice-byte10/StarterPlayerScripts/refs/heads/main/scriptActive")
+text = text:match("^%s*(.-)%s*$")
+
+if text == "valid" then
+    print("working")
+else
+    warn("not valid")
+end
